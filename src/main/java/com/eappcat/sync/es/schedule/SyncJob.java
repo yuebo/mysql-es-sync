@@ -30,6 +30,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.persistence.Table;
 import java.lang.reflect.Field;
@@ -42,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 @Component
@@ -266,7 +269,20 @@ public class SyncJob implements ApplicationRunner {
     }
     @EventListener
     public void listen(EntityChangeEvent entityChangeEvent){
-        log.info("{}",JSONObject.toJSONString(entityChangeEvent));
+        //判断事务状态，在提交后更新
+        if(TransactionSynchronizationManager.isSynchronizationActive()){
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter(){
+                public void afterCommit(){
+                    onEntityChanged(entityChangeEvent);
+                }
+            });
+        }else {
+            onEntityChanged(entityChangeEvent);
+        }
+    }
+
+    private void onEntityChanged(EntityChangeEvent entityChangeEvent) {
+        log.info("{}", JSONObject.toJSONString(entityChangeEvent));
         switch (entityChangeEvent.getType()){
             case DELETE:
                 Table table= AnnotationUtils.findAnnotation(entityChangeEvent.getClass(),Table.class);
