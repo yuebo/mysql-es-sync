@@ -10,5 +10,3 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-sync:
-  syncDelay: 60000

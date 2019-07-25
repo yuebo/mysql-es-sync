@@ -64,7 +64,7 @@ public class SyncJob implements ApplicationRunner {
 
     private volatile boolean initialized=false;
 
-    @Scheduled(fixedDelayString = "${sync.syncDelay}")
+    @Scheduled(fixedDelayString = "${sync.delay:60000}",initialDelay = 5000)
     @Transactional
     public void sync() throws Exception{
         if(initialized){
@@ -257,14 +257,17 @@ public class SyncJob implements ApplicationRunner {
     }
     @EventListener
     public void refreshMapping(RefreshMappingEvent event){
-        databaseSyncDao.findAll().stream().forEach(databaseSyncEntity->{
-            try {
-                createMappingForEntity(databaseSyncEntity);
-            } catch (Exception e) {
-                log.error("error to refresh mapping, {}",e);
-            }
-
-        });
+        if(syncConfigProperties.isAutoMapping()){
+            databaseSyncDao.findAll().stream().forEach(databaseSyncEntity->{
+                try {
+                    createMappingForEntity(databaseSyncEntity);
+                } catch (Exception e) {
+                    log.error("error to refresh mapping, {}",e);
+                }
+            });
+        }else {
+            log.debug("auto mapping disabled,using spring data elasticsearch to create index mapping");
+        }
         this.initialized=true;
     }
     @EventListener
