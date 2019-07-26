@@ -10,11 +10,12 @@
 需要给同步的Entity加@Table的name属性，同时需要@Entity具有updatedTime属性。
 
 ### 定义实体类
-例如：
+这里Es和JPA共享了相同的实体类，例如：
 ```java
 @Entity
 @Table(name = "tbl_device")
 @Data
+@Document(indexName = "tbl_device",type = "_doc",createIndex = false)
 @EntityListeners({AuditingEntityListener.class,SyncEntityListener.class})
 public class Device {
     @Id
@@ -34,7 +35,7 @@ public class Device {
 ```
 
 ### 定义同步
-需要将JPA的Repository继承自SyncableRepository
+需要将JPA的Repository继承自SyncableRepository，注意请将jpa和es的包扫描分开，否则会报错
 ```java
 public interface DeviceRepository extends JpaRepository<Device,Long>, SyncableRepository<Device> {
 }
@@ -66,25 +67,9 @@ GET /sync/refresh
 ### 使用ES的DAO查询
 一旦同步完成之后就可以用Elasticsearch的查询来查内容了，包括分词等都可以实现
 
-```java
-@Document(indexName = "tbl_device",type = "_doc",createIndex = false)
-@Data
-public class EsDevice {
-    @Id
-    private String id;
-    private Date updatedTime;
-    private String deviceName;
-    private String deviceCode;
-    private String gbId;
-    private String deviceType;
-    private BigDecimal lat;
-    private BigDecimal lng;
-}
-
-```
 Repository
 ```java
-public interface EsDeviceRepository extends ElasticsearchCrudRepository<EsDevice,String> {
+public interface EsDeviceRepository extends ElasticsearchCrudRepository<Device,String> {
 }
 ```
 控制器
@@ -95,7 +80,7 @@ public class DeviceController {
     @Autowired
     private EsDeviceRepository repository;
     @GetMapping
-    public List<EsDevice> list(){
+    public List<Device> list(){
         return repository.findAll(PageRequest.of(0,1000)).getContent();
     }
 

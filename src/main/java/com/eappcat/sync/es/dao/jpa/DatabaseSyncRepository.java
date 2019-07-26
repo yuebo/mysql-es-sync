@@ -1,4 +1,4 @@
-package com.eappcat.sync.es.dao;
+package com.eappcat.sync.es.dao.jpa;
 
 import com.eappcat.sync.es.entity.DatabaseSyncEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

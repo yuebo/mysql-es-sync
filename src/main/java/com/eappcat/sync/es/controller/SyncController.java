@@ -1,7 +1,7 @@
 package com.eappcat.sync.es.controller;
 
 import com.eappcat.sync.es.core.RefreshMappingEvent;
-import com.eappcat.sync.es.dao.DatabaseSyncRepository;
+import com.eappcat.sync.es.dao.jpa.DatabaseSyncRepository;
 import com.eappcat.sync.es.entity.DatabaseSyncEntity;
 import com.eappcat.sync.es.vo.DatabaseSyncVO;
 import org.springframework.beans.factory.annotation.Autowired;

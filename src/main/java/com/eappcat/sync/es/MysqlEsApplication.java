@@ -11,10 +11,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EntityScan
-@EnableJpaRepositories
+@EnableJpaRepositories(basePackages = "com.eappcat.sync.es.dao.jpa")
 @EnableScheduling
 @EnableConfigurationProperties(SyncConfigProperties.class)
-@EnableElasticsearchRepositories
+@EnableElasticsearchRepositories(basePackages = "com.eappcat.sync.es.dao.es")
 @EnableJpaAuditing
 public class MysqlEsApplication {
     public static void main(String[] args) {

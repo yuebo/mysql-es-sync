@@ -4,6 +4,7 @@ import com.eappcat.sync.es.core.SyncEntityListener;
 import com.eappcat.sync.es.core.Text;
 import lombok.Data;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import java.util.Date;
 @Table(name = "tbl_device")
 @Data
 @EntityListeners({AuditingEntityListener.class,SyncEntityListener.class})
+@Document(indexName = "tbl_device",type = "_doc",createIndex = false)
 public class Device {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

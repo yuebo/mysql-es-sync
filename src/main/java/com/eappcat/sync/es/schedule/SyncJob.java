@@ -6,7 +6,7 @@ import com.eappcat.sync.es.core.EntityChangeEvent;
 import com.eappcat.sync.es.core.RefreshMappingEvent;
 import com.eappcat.sync.es.core.SyncableRepository;
 import com.eappcat.sync.es.core.Text;
-import com.eappcat.sync.es.dao.DatabaseSyncRepository;
+import com.eappcat.sync.es.dao.jpa.DatabaseSyncRepository;
 import com.eappcat.sync.es.entity.DatabaseSyncEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
@@ -44,7 +44,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 @Component
